@@ -16,7 +16,13 @@
     </insert>
 
     <update id="update">
-       UPDATE otp SET is_used = ${used} where id = #{id}
+       UPDATE otp
+           <set>
+               <if test="used!=null and used!=''">
+                    is_used = ${used}
+               </if>
+           </set>
+            where id = #{id}
     </update>
 
     <select id="findOne" resultMap="otp">

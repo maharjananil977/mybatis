@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.personsal.mybatis.service.user.UserService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,26 +37,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-
-    try {
-      jwt = authHeader.substring(7);
-      userEmail = jwtService.extractUserName(jwt);
-      if (StringUtils.isNotEmpty(userEmail)
-          && SecurityContextHolder.getContext().getAuthentication() == null) {
-        UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
-        if (jwtService.isTokenValid(jwt, userDetails)) {
-          SecurityContext context = SecurityContextHolder.createEmptyContext();
-          UsernamePasswordAuthenticationToken authToken =
-              new UsernamePasswordAuthenticationToken(
-                  userDetails, null, userDetails.getAuthorities());
-          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-          context.setAuthentication(authToken);
-          SecurityContextHolder.setContext(context);
-        }
+    jwt = authHeader.substring(7);
+    userEmail = jwtService.extractUserName(jwt);
+    if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
+      UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
+      if (jwtService.isTokenValid(jwt, userDetails)) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        UsernamePasswordAuthenticationToken authToken =
+            new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        context.setAuthentication(authToken);
+        SecurityContextHolder.setContext(context);
       }
-      filterChain.doFilter(request, response);
-    } catch (Exception e) {
-      e.printStackTrace();
     }
+    filterChain.doFilter(request, response);
   }
 }
