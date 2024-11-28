@@ -1,12 +1,15 @@
 package org.personsal.mybatis.service.otp;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.personsal.mybatis.common.enums.OTPType;
 import org.personsal.mybatis.dao.otp.OtpDao;
 import org.personsal.mybatis.dao.otp.OtpFilter;
+import org.personsal.mybatis.domain.notification.NotificationRequest;
 import org.personsal.mybatis.domain.otp.OtpRequest;
 import org.personsal.mybatis.entity.Otp;
+import org.personsal.mybatis.service.notification.email.EmailService;
 import org.personsal.mybatis.service.user.UserService;
 import org.personsal.mybatis.utils.DateUtils;
 import org.personsal.mybatis.utils.StringUtils;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class OtpServiceImpl implements OtpService {
   private final OtpDao otpDao;
   private final UserService userService;
+  private final EmailService emailService;
 
   @Value("${config.otp.expiresOn}")
   private static int otpExpiresOn;
@@ -35,6 +39,12 @@ public class OtpServiceImpl implements OtpService {
             .build();
     try {
       this.otpDao.insert(otpEntity);
+      this.emailService.send(
+          NotificationRequest.builder()
+              .content("Your otp is :: " + otp)
+              .title("Registration otp")
+              .recipients(List.of(email))
+              .build());
     } catch (Exception e) {
       e.printStackTrace();
     }
