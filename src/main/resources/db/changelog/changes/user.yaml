@@ -1,4 +1,5 @@
 databaseChangeLog:
+  # user
   - changeSet:
       id: 1
       author: maharjananil
@@ -49,22 +50,66 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: enabled
-                  type: varchar(255)
-                  constraints:
-                    nullable: true
+                  name: is_enabled
+                  type: boolean
+                  value: false
               - column:
                   name: account_non_expired
-                  type: varchar(255)
-                  constraints:
-                    nullable: true
+                  type: boolean
+                  value: false
               - column:
                   name: credentials_non_expired
-                  type: varchar(255)
-                  constraints:
-                    nullable: true
+                  type: boolean
+                  value: false
               - column:
                   name: account_non_locked
-                  type: varchar(255)
+                  type: boolean
+                  value: true
+              - column:
+                  name: is_verified
+                  type: boolean
+                  value: false
+  # otp
+  - changeSet:
+      id: 2
+      author: maharjananil
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: otp
+      changes:
+        - createTable:
+            tableName: otp
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
                   constraints:
-                    nullable: true
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: otp
+                  type: varchar(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(250)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: otp_type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_used
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  value: false
+              - column:
+                  name: created_on
+                  type: bigint

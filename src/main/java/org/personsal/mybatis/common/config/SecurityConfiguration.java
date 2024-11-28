@@ -1,5 +1,7 @@
 package org.personsal.mybatis.common.config;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 import lombok.RequiredArgsConstructor;
 import org.personsal.mybatis.service.jwt.JwtAuthenticationFilter;
 import org.personsal.mybatis.service.user.UserService;
@@ -17,8 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+                .authorizeHttpRequests(request -> request.requestMatchers("/ping","/api-docs","/auth/**","/register/**").permitAll())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

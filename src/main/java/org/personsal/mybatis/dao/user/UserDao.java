@@ -1,4 +1,4 @@
-package org.personsal.mybatis.dao;
+package org.personsal.mybatis.dao.user;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.personsal.mybatis.entity.User;
@@ -13,5 +13,6 @@ public interface UserDao {
     Optional<User> findById(int id);
 
     void insert(User user);
-    Optional<User> findByEmail(String email);
+    Optional<User> findOne(UserFilter filter);
+    void update(User user);
 }

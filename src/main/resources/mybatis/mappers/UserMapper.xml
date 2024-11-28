@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.personsal.mybatis.dao.UserDao">
-    <resultMap id="UserResultMap" type="org.personsal.mybatis.entity.User">
+<mapper namespace="org.personsal.mybatis.dao.user.UserDao">
+    <resultMap id="user" type="org.personsal.mybatis.entity.User">
         <id column="id" property="id"/>
         <result column="email" property="email"/>
         <result column="username" property="username"/>
@@ -9,30 +9,47 @@
         <result column="last_name" property="lastName"/>
         <result column="password" property="password"/>
         <result column="role" property="role"/>
-        <result column="enabled" property="enabled"/>
+        <result column="is_enabled" property="enabled"/>
         <result column="account_non_expired" property="accountNonExpired"/>
         <result column="credentials_non_expired" property="credentialsNonExpired"/>
         <result column="account_non_locked" property="accountNonLocked"/>
+        <result column="is_verified" property="verified"/>
     </resultMap>
 
-    <select id="findById" resultMap="UserResultMap">
+    <select id="findById" resultMap="user">
         SELECT * FROM users WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultMap="UserResultMap">
+    <select id="findAll" resultMap="user">
         SELECT * FROM users
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (first_name, last_name, email, username, password, role)
-        VALUES (#{firstName}, #{lastName}, #{email}, #{username}, #{password}, #{role})
+        INSERT INTO users (first_name, last_name, email, username, password, role, is_verified)
+        VALUES (#{firstName}, #{lastName}, #{email}, #{username}, #{password}, #{role},#{verified})
     </insert>
 
     <update id="update">
-        UPDATE users SET name=#{name}, email=#{email} WHERE id=#{id}
+        UPDATE users
+        <set>
+            <if test="verified!=null and verified!=''">
+                is_verified = #{verified},
+            </if>
+            <if test="enabled!=null and enabled!=''">
+                is_enabled = #{verified},
+            </if>
+        </set>
+        WHERE id=#{id}
     </update>
 
     <delete id="delete">
         DELETE FROM users WHERE id = #{id}
     </delete>
+
+    <select id="findOne" resultMap="user">
+        SELECT * FROM users WHERE 1=1
+        <if test="email!=null and email!=''">
+            AND lower(email)=lower(#{email})
+        </if>
+    </select>
 </mapper>

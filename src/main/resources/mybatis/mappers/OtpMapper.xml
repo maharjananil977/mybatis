@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.personsal.mybatis.dao.otp.OtpDao">
+    <resultMap id="otp" type="org.personsal.mybatis.entity.Otp">
+        <id column="id" property="id"/>
+        <result column="email" property="email"/>
+        <result column="otp" property="otp"/>
+        <result column="otp_type" property="otpType"/>
+        <result column="is_used" property="used"/>
+        <result column="created_on" property="createdOn"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO otp (otp,email,otp_type,is_used,created_on)
+        VALUES (#{otp},#{email}, #{otpType}, #{used}, #{createdOn})
+    </insert>
+
+    <update id="update">
+       UPDATE otp SET is_used = ${used} where id = #{id}
+    </update>
+
+    <select id="findOne" resultMap="otp">
+        SELECT id,email,otp,otp_type,is_used,created_on FROM otp WHERE 1=1 AND is_used = FALSE
+        <if test="email!=null and email!=''">
+            AND lower(email)=lower(#{email})
+        </if>
+        <if test="otp!=null and otp!=''">
+            AND lower(otp)=lower(#{otp})
+        </if>
+        <if test="email!=null and email!=''">
+            AND lower(otp_type)=lower(#{otpType})
+        </if>
+    </select>
+</mapper>

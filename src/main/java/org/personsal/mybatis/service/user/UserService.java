@@ -12,4 +12,6 @@ public interface UserService {
     List<User> getAllUsers();
 
     String insertUser();
+
+    void verifyUser(String email);
 }

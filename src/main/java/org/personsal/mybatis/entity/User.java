@@ -30,9 +30,14 @@ public class User implements UserDetails {
     private boolean accountNonExpired;
     private boolean credentialsNonExpired;
     private boolean accountNonLocked;
+    private boolean verified;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(Role.getRoleByName(role).name()));
+    }
+
+    public String getUsername() {
+        return this.email;
     }
 }

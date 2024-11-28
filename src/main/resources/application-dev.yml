@@ -4,19 +4,17 @@ spring:
   liquibase:
     enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://localhost:5432/mybatis
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: admin
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mappers/*.xml
