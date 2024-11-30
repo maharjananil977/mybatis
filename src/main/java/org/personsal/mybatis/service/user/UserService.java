@@ -1,5 +1,8 @@
 package org.personsal.mybatis.service.user;
 
+import org.personsal.mybatis.common.page.CustomPage;
+import org.personsal.mybatis.common.response.BaseResponse;
+import org.personsal.mybatis.domain.user.UserSearchRequest;
 import org.personsal.mybatis.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -7,9 +10,9 @@ import java.util.List;
 
 public interface UserService {
     UserDetailsService userDetailsService();
-    User getUserById(int id);
+    BaseResponse<User> getUserById(int id);
 
-    List<User> getAllUsers();
+    BaseResponse<CustomPage<User>> getAllUsers(UserSearchRequest userSearchRequest);
 
     String insertUser();
 

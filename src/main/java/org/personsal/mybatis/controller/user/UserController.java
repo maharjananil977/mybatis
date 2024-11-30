@@ -1,6 +1,10 @@
 package org.personsal.mybatis.controller.user;
 
 import lombok.RequiredArgsConstructor;
+import org.personsal.mybatis.common.page.CustomPage;
+import org.personsal.mybatis.common.page.SearchRequest;
+import org.personsal.mybatis.common.response.BaseResponse;
+import org.personsal.mybatis.domain.user.UserSearchRequest;
 import org.personsal.mybatis.entity.User;
 import org.personsal.mybatis.service.user.UserService;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +23,13 @@ public class UserController {
         return ResponseEntity.ok(this.userService.insertUser());
     }
 
-    @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(this.userService.getAllUsers());
+    @PostMapping
+    public ResponseEntity<BaseResponse<CustomPage<User>>> findAll(@RequestBody UserSearchRequest request) {
+        return ResponseEntity.ok(this.userService.getAllUsers(request));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<User> findUserById(@PathVariable("id") Integer id) {
+    public ResponseEntity<BaseResponse<User>> findUserById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(this.userService.getUserById(id));
     }
 }

@@ -1,11 +1,16 @@
 package org.personsal.mybatis.service.user;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.personsal.mybatis.common.enums.Role;
+import org.personsal.mybatis.common.exceptionhandler.exceptions.NotFoundException;
+import org.personsal.mybatis.common.page.CustomPage;
+import org.personsal.mybatis.common.page.PageRequest;
+import org.personsal.mybatis.common.response.BaseResponse;
 import org.personsal.mybatis.dao.user.UserDao;
 import org.personsal.mybatis.dao.user.UserFilter;
+import org.personsal.mybatis.domain.user.UserSearchRequest;
 import org.personsal.mybatis.entity.User;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,13 +34,24 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getUserById(int id) {
-    return this.userDao.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+  public BaseResponse<User> getUserById(int id) {
+    return new BaseResponse<User>()
+        .toBaseResponse(
+            this.userDao.findById(id).orElseThrow(() -> new NotFoundException("User not found")));
   }
 
-  @Override
-  public List<User> getAllUsers() {
-    return this.userDao.findAll();
+  @Overridex
+  public BaseResponse<CustomPage<User>> getAllUsers(UserSearchRequest searchRequest) {
+    PageRequest pageRequest = new PageRequest().basePageRequest(searchRequest);
+    Page<User> users = this.userDao.findAllWithPagination();
+    return new BaseResponse<CustomPage<User>>()
+        .toBaseResponse(
+            new CustomPage<User>()
+                .toCustomPage(
+                    users,
+                    searchRequest.getPageSize(),
+                    searchRequest.getPageSize(),
+                    searchRequest.getPageNumber()));
   }
 
   @Override
@@ -58,7 +74,7 @@ public class UserServiceImpl implements UserService {
     User user =
         this.userDao
             .findOne(UserFilter.builder().email(email).build())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new NotFoundException("User not found"));
     user.setVerified(true);
     user.setEnabled(true);
     this.userDao.update(user);

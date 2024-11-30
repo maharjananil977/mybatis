@@ -10,14 +10,13 @@ import org.personsal.mybatis.domain.auth.LoginRequest;
 import org.personsal.mybatis.domain.auth.LoginResponse;
 import org.personsal.mybatis.domain.auth.SignUpRequest;
 import org.personsal.mybatis.domain.auth.SignUpResponse;
+import org.personsal.mybatis.entity.User;
 import org.personsal.mybatis.service.jwt.JwtService;
 import org.personsal.mybatis.service.otp.OtpService;
-import org.personsal.mybatis.utils.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.personsal.mybatis.entity.User;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +44,8 @@ public class AuthServiceImpl implements AuthService {
             .build();
     String otp = otpService.generateOtp(request.getEmail(), OTPType.REGISTRATION);
     userRepository.insert(user);
-    return BaseResponse.<SignUpResponse>builder()
-        .data(new SignUpResponse(request.getEmail(), otp))
-        .build();
+    return new BaseResponse<SignUpResponse>()
+        .toCreatedBaseResponse(new SignUpResponse(request.getEmail(), otp));
   }
 
   @Override
@@ -59,8 +57,7 @@ public class AuthServiceImpl implements AuthService {
             .findOne(UserFilter.builder().email(request.getEmail()).build())
             .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
     var jwt = jwtService.generateToken(user);
-    return BaseResponse.<LoginResponse>builder()
-        .data(new LoginResponse(request.getEmail(), jwt))
-        .build();
+    return new BaseResponse<LoginResponse>()
+        .toBaseResponse(new LoginResponse(request.getEmail(), jwt));
   }
 }

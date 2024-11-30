@@ -9,7 +9,8 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum Role {
     USER("USER"),
-    ADMIN("ADMIN");
+    ADMIN("ADMIN"),
+    SUPER_ADMIN("SUPER_ADMIN");
     private final String name;
 
     public static Role getRoleByName(String name) {
