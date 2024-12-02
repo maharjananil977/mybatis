@@ -1,6 +1,8 @@
 package org.personsal.mybatis.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +28,8 @@ public class User implements UserDetails {
     private String lastName;
     @JsonIgnore
     private String password;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private boolean enabled;
     private boolean accountNonExpired;
     private boolean credentialsNonExpired;
@@ -35,7 +38,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(Role.getRoleByName(role).name()));
+        return role.getGrantedAuthorities();
     }
 
     public String getUsername() {

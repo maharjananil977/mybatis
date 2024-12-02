@@ -23,7 +23,7 @@ public class UserController {
         return ResponseEntity.ok(this.userService.insertUser());
     }
 
-    @PostMapping
+    @PostMapping("search")
     public ResponseEntity<BaseResponse<CustomPage<User>>> findAll(@RequestBody UserSearchRequest request) {
         return ResponseEntity.ok(this.userService.getAllUsers(request));
     }

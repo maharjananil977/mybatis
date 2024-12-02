@@ -1,7 +1,8 @@
 package org.personsal.mybatis.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.personsal.mybatis.common.enums.Role;
+import org.personsal.mybatis.common.exceptionhandler.exceptions.InternalError;
+import org.personsal.mybatis.common.exceptionhandler.exceptions.InvalidException;
 import org.personsal.mybatis.common.exceptionhandler.exceptions.NotFoundException;
 import org.personsal.mybatis.common.page.CustomPage;
 import org.personsal.mybatis.common.page.PageRequest;
@@ -40,32 +41,27 @@ public class UserServiceImpl implements UserService {
             this.userDao.findById(id).orElseThrow(() -> new NotFoundException("User not found")));
   }
 
-  @Overridex
+  @Override
   public BaseResponse<CustomPage<User>> getAllUsers(UserSearchRequest searchRequest) {
     PageRequest pageRequest = new PageRequest().basePageRequest(searchRequest);
-    Page<User> users = this.userDao.findAllWithPagination();
-    return new BaseResponse<CustomPage<User>>()
-        .toBaseResponse(
-            new CustomPage<User>()
-                .toCustomPage(
-                    users,
-                    searchRequest.getPageSize(),
-                    searchRequest.getPageSize(),
-                    searchRequest.getPageNumber()));
+    try {
+      Page<User> users = this.userDao.findAllWithPagination(pageRequest);
+      return new BaseResponse<CustomPage<User>>()
+          .toBaseResponse(
+              new CustomPage<User>()
+                  .toCustomPage(
+                      users,
+                      searchRequest.getPageSize(),
+                      searchRequest.getPageSize(),
+                      searchRequest.getPageNumber()));
+    } catch (Exception ex) {
+      throw new InternalError(ex.getMessage());
+    }
   }
 
   @Override
   public String insertUser() {
-    for (int i = 0; i < 5; i++) {
-      User user = new User();
-      user.setEmail("email" + i + "@gmail.com");
-      user.setUsername(user.getEmail());
-      user.setFirstName("first" + i);
-      user.setLastName("lastname" + i);
-      user.setPassword("password" + i);
-      user.setRole(Role.ADMIN.name());
-      this.userDao.insert(user);
-    }
+
     return "Success";
   }
 

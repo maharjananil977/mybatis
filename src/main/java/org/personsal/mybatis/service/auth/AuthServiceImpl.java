@@ -35,12 +35,12 @@ public class AuthServiceImpl implements AuthService {
             .lastName(request.getLastName())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
-            .role(Role.USER.name())
+            .role(Role.USER)
             .verified(false)
             .enabled(true)
-            .accountNonLocked(false)
-            .accountNonExpired(false)
-            .credentialsNonExpired(false)
+            .accountNonLocked(true)
+            .accountNonExpired(true)
+            .credentialsNonExpired(true)
             .build();
     String otp = otpService.generateOtp(request.getEmail(), OTPType.REGISTRATION);
     userRepository.insert(user);
