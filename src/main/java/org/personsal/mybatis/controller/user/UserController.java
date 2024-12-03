@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("search")
-    public ResponseEntity<BaseResponse<CustomPage<User>>> findAll(@RequestBody UserSearchRequest request) {
+    public ResponseEntity<BaseResponse<List<User>>> findAll(@RequestBody UserSearchRequest request) {
         return ResponseEntity.ok(this.userService.getAllUsers(request));
     }
 

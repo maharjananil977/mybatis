@@ -8,5 +8,4 @@ import org.personsal.mybatis.common.page.SearchRequest;
 @Data
 @Builder
 public class UserSearchRequest extends SearchRequest {
-
 }

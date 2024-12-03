@@ -11,5 +11,5 @@ public class SearchRequest implements Request {
     private int pageSize;
     private String sortField;
     private SortOrder sortOrder;
-    private int bookId;
+    private String searchTerm;
 }

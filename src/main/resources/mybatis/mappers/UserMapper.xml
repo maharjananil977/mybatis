@@ -20,8 +20,26 @@
         SELECT * FROM users WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultMap="user">
-        SELECT * FROM users
+    <select id="findAllWithPagination" resultMap="user">
+        SELECT *
+        FROM users
+        WHERE 1 = 1
+        <if test="searchTerm!=null and searchTerm!=''">
+            AND replace(concat(email,username,first_name,last_name),' ','') ilike
+            replace(#{searchTerm},' ','')
+        </if>
+        ORDER BY email ${sortOrder}
+        OFFSET ${offset}
+        LIMIT ${pageSize}
+    </select>
+    <select id="count" resultType="int">
+        SELECT count(id)
+        from users
+        WHERE 1 = 1
+        <if test="searchTerm!=null and searchTerm!=''">
+            AND replace(concat(email,username,first_name,last_name),' ','') ilike
+            replace(#{searchTerm},' ','')
+        </if>
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">

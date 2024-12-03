@@ -1,6 +1,7 @@
 package org.personsal.mybatis.dao.user;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.personsal.mybatis.common.page.PageRequest;
 import org.personsal.mybatis.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +18,6 @@ public interface UserDao {
     void insert(User user);
     Optional<User> findOne(UserFilter filter);
     void update(User user);
-    Page<User> findAllWithPagination(Pageable pageable);
+    List<User> findAllWithPagination(PageRequest pageRequest);
+    int count(PageRequest pageRequest);
 }

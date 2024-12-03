@@ -1,8 +1,8 @@
 package org.personsal.mybatis.service.user;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.personsal.mybatis.common.exceptionhandler.exceptions.InternalError;
-import org.personsal.mybatis.common.exceptionhandler.exceptions.InvalidException;
 import org.personsal.mybatis.common.exceptionhandler.exceptions.NotFoundException;
 import org.personsal.mybatis.common.page.CustomPage;
 import org.personsal.mybatis.common.page.PageRequest;
@@ -11,7 +11,6 @@ import org.personsal.mybatis.dao.user.UserDao;
 import org.personsal.mybatis.dao.user.UserFilter;
 import org.personsal.mybatis.domain.user.UserSearchRequest;
 import org.personsal.mybatis.entity.User;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,20 +41,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public BaseResponse<CustomPage<User>> getAllUsers(UserSearchRequest searchRequest) {
+  public BaseResponse<List<User>> getAllUsers(UserSearchRequest searchRequest) {
     PageRequest pageRequest = new PageRequest().basePageRequest(searchRequest);
     try {
-      Page<User> users = this.userDao.findAllWithPagination(pageRequest);
-      return new BaseResponse<CustomPage<User>>()
-          .toBaseResponse(
-              new CustomPage<User>()
-                  .toCustomPage(
-                      users,
-                      searchRequest.getPageSize(),
-                      searchRequest.getPageSize(),
-                      searchRequest.getPageNumber()));
+      List<User> users = this.userDao.findAllWithPagination(pageRequest);
+      int total = this.userDao.count(pageRequest);
+      return new BaseResponse<List<User>>()
+          .toBaseResponse(users,total,searchRequest.getPageSize(),searchRequest.getPageNumber());
     } catch (Exception ex) {
-      throw new InternalError(ex.getMessage());
+      ex.printStackTrace();
+      throw new InternalError("Something went wrong");
     }
   }
 

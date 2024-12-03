@@ -12,7 +12,7 @@ public interface UserService {
     UserDetailsService userDetailsService();
     BaseResponse<User> getUserById(int id);
 
-    BaseResponse<CustomPage<User>> getAllUsers(UserSearchRequest userSearchRequest);
+    BaseResponse<List<User>> getAllUsers(UserSearchRequest userSearchRequest);
 
     String insertUser();
 

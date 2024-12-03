@@ -1,14 +1,13 @@
 package org.personsal.mybatis.common.page;
 
 import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.experimental.Accessors;
 import org.personsal.mybatis.common.enums.SortOrder;
+import org.personsal.mybatis.utils.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -24,6 +23,7 @@ public class PageRequest implements Pageable, Serializable {
   private long offset;
   private String sortField;
   private SortOrder sortOrder;
+  private String searchTerm;
 
   @Accessors(fluent = true)
   private boolean hasPrevious;
@@ -40,14 +40,14 @@ public class PageRequest implements Pageable, Serializable {
 
   @Override
   public long getOffset() {
-    return Math.max(pageNumber*pageSize, 0);
+    return Math.max(pageNumber * pageSize, 0);
   }
 
   @Override
   public Sort getSort() {
-    if(sortOrder== SortOrder.DESC) return Sort.by(Sort.Order.desc(sortField));
-    else if (sortOrder==SortOrder.ASC) return Sort.by(Sort.Direction.ASC,sortField);
-    return Sort.by(Sort.Direction.DESC,sortField);
+    if (sortOrder == SortOrder.DESC) return Sort.by(Sort.Order.desc(sortField));
+    else if (sortOrder == SortOrder.ASC) return Sort.by(Sort.Direction.ASC, sortField);
+    return Sort.by(Sort.Direction.DESC, sortField);
   }
 
   @Override
@@ -76,11 +76,15 @@ public class PageRequest implements Pageable, Serializable {
   }
 
   public PageRequest basePageRequest(SearchRequest searchRequest) {
-     return PageRequest.builder()
-            .pageNumber(searchRequest.getPageNumber() - 1)
-            .pageSize(searchRequest.getPageSize())
-            .sortField(searchRequest.getSortField())
-            .sortOrder(searchRequest.getSortOrder())
-            .build();
+    return PageRequest.builder()
+        .pageNumber(searchRequest.getPageNumber() - 1)
+        .pageSize(searchRequest.getPageSize())
+        .sortField(searchRequest.getSortField())
+        .sortOrder(searchRequest.getSortOrder())
+        .searchTerm(
+            StringUtils.isBlankOrNull(searchRequest.getSearchTerm())
+                ? ""
+                : "%" + searchRequest.getSearchTerm() + "%")
+        .build();
   }
 }
